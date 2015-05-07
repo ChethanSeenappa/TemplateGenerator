@@ -58,7 +58,8 @@ public class TemplateGenerator {
     public static void main(String[] args) {
         MasterTemplateUtil masterTemplate = new MasterTemplateUtil();
         masterTemplate.buildMSHSegement();
-        HashMap mshSegment = masterTemplate.getMSHFieldValuePair();
+        masterTemplate.buildEVNSegement();
+        masterTemplate.buildPIDSegement();
         String fileName;
         if(args.length > 0){
             fileName = args[0];
@@ -69,7 +70,7 @@ public class TemplateGenerator {
         }
         TemplateGenerator templateGenerator = new TemplateGenerator(fileName);
         try {
-            templateGenerator.generateTemplateWithHL7Standards(mshSegment);
+            templateGenerator.generateTemplateWithHL7Standards(masterTemplate);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(TemplateGenerator.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
@@ -77,40 +78,56 @@ public class TemplateGenerator {
         }
     }
 
-    private void generateTemplateWithHL7Standards(HashMap mshSegment) throws FileNotFoundException, IOException {
+    private void generateTemplateWithHL7Standards(MasterTemplateUtil masterTemplate) throws FileNotFoundException, IOException {
         BufferedReader br = new BufferedReader(new FileReader(new File(this.getFilePath())));
         FileWriter fw = new FileWriter(new File(this.getDestinationFilePath()));
         try (BufferedWriter writeToFile = new BufferedWriter(fw)) {
             String result;
             LinkedList mshSegementValues = new LinkedList();
+            LinkedList evnSegementValues = new LinkedList();
+            LinkedList pidSegementValues = new LinkedList();
             while((result = br.readLine())!= null){
                 String[] segements = result.split(",");
                 if(segements[0].contains("MSH")){
                     mshSegementValues.add(result);
+                }else if(segements[0].contains("EVN")){
+                    evnSegementValues.add(result);
+                }else if(segements[0].contains("PID")){
+                    pidSegementValues.add(result);
                 }
             }
-            Iterator iterate = mshSegment.entrySet().iterator();
-            while (iterate.hasNext()) {
-                Entry element = (Entry) iterate.next();
-                String key = element.getKey().toString();
-                String[] cardinalityAndDescription = (String[]) element.getValue();
-                String currentValue = key;
-                for (String cardinality : cardinalityAndDescription) {
-                    currentValue += (", " + cardinality);
-                }
-                if(mshSegementValues.size() >0){
-                    String firstRow = mshSegementValues.getFirst().toString();
-                    String[] elements = firstRow.split(",");
-                    if(elements[0].equals(key)){
-                        String[] values= mshSegementValues.removeFirst().toString().split(",");
-                        for(int i = values.length-4; i <values.length; i++){
-                            currentValue += (","+values[i]);
-                        }
+            this.writeContentToMasterTemplate(masterTemplate.getMSHFieldValuePair(), mshSegementValues, writeToFile);
+            this.writeContentToMasterTemplate(masterTemplate.getEVNFieldValuePair(), evnSegementValues, writeToFile);
+            this.writeContentToMasterTemplate(masterTemplate.getPIDFieldValuePair(), pidSegementValues, writeToFile);
+        }
+    }
+
+    private void writeContentToMasterTemplate(HashMap currentSegment, LinkedList currentSegementValues, BufferedWriter writeToFile) throws IOException {
+        Iterator iterate = currentSegment.entrySet().iterator();
+        while (iterate.hasNext()) {
+            Entry element = (Entry) iterate.next();
+            String key = element.getKey().toString();
+            String[] cardinalityAndDescription = (String[]) element.getValue();
+            String currentValue = key;
+            for (String cardinality : cardinalityAndDescription) {
+                currentValue += (", " + cardinality);
+            }
+            if(currentSegementValues.size() > 0){
+                String firstRow = currentSegementValues.getFirst().toString();
+                String[] elements = firstRow.split(",");
+                if(elements[0].equals(key)){
+                    String[] values= currentSegementValues.removeFirst().toString().split(",");
+                    for(int i = values.length-4; i <values.length; i++){
+                        currentValue += (","+values[i]);
                     }
                 }
-                writeToFile.write(currentValue);
-                writeToFile.write(System.lineSeparator());
             }
+            writeToFile.write(currentValue);
+            writeToFile.write(System.lineSeparator());
+        }
+        for (Object currentSegementValue : currentSegementValues) {
+            writeToFile.write(currentSegementValue.toString());
+            writeToFile.write(System.lineSeparator());
         }
     }
     
