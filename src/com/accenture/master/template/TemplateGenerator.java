@@ -17,9 +17,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map.Entry;
-import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -31,9 +28,8 @@ public class TemplateGenerator {
     public String filePath;
     private String destinationFilePath;
 
-    private TemplateGenerator(String fileName) {
-        String completePath = "C:\\monkParser\\"+fileName;
-        this.setFilePath(completePath);
+    public TemplateGenerator(String filePath){
+        this.setFilePath(filePath);
     }
     
     private void setFilePath(String filePath){
@@ -46,8 +42,14 @@ public class TemplateGenerator {
     }
     
     public void setDestinationFilePath(String destinationFilePath) {
-        String[] tempPath= destinationFilePath.split("\\.");
-        String tempdestinationFilePath = tempPath[0]+"FinalTemplate.csv";
+        String[] tempPath= destinationFilePath.split("\\\\");
+        String fileName = tempPath[tempPath.length -1], tempdestinationFilePath = "";
+        String[] appendFileName = fileName.split("\\.");
+        fileName = "Legacy_"+appendFileName[0]+"_TR.csv";
+        for(int i =0 ; i< tempPath.length-1; i++){
+            tempdestinationFilePath += (tempPath[i]+"\\");
+        }
+        tempdestinationFilePath += fileName;
         this.destinationFilePath = tempdestinationFilePath;
     }
     
@@ -55,30 +57,7 @@ public class TemplateGenerator {
         return this.destinationFilePath;
     }
     
-    public static void main(String[] args) {
-        MasterTemplateUtil masterTemplate = new MasterTemplateUtil();
-        masterTemplate.buildMSHSegement();
-        masterTemplate.buildEVNSegement();
-        masterTemplate.buildPIDSegement();
-        String fileName;
-        if(args.length > 0){
-            fileName = args[0];
-        }else{
-            Scanner scanInput = new Scanner(System.in);
-            System.out.println("Enter file name with extention:");
-            fileName = scanInput.nextLine();
-        }
-        TemplateGenerator templateGenerator = new TemplateGenerator(fileName);
-        try {
-            templateGenerator.generateTemplateWithHL7Standards(masterTemplate);
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(TemplateGenerator.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(TemplateGenerator.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    private void generateTemplateWithHL7Standards(MasterTemplateUtil masterTemplate) throws FileNotFoundException, IOException {
+    public void generateTemplateWithHL7Standards(MasterTemplateUtil masterTemplate) throws FileNotFoundException, IOException {
         BufferedReader br = new BufferedReader(new FileReader(new File(this.getFilePath())));
         FileWriter fw = new FileWriter(new File(this.getDestinationFilePath()));
         try (BufferedWriter writeToFile = new BufferedWriter(fw)) {
