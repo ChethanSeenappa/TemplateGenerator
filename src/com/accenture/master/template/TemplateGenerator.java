@@ -62,11 +62,16 @@ public class TemplateGenerator {
         FileWriter fw = new FileWriter(new File(this.getDestinationFilePath()));
         try (BufferedWriter writeToFile = new BufferedWriter(fw)) {
             String result;
-            LinkedList mshSegmentValues = new LinkedList(),evnSegmentValues = new LinkedList(), 
-                pidSegmentValues = new LinkedList(), pv1SegmentValues = new LinkedList(),
-                pv2SegmentValues = new LinkedList(), orcSegmentValues = new LinkedList(),
-                obxSegmentValues = new LinkedList(), obrSegmentValues = new LinkedList(),
-                dg1SegmentValues = new LinkedList(), remainingSegmentValues = new LinkedList();
+            LinkedList mshSegmentValues = new LinkedList();
+            LinkedList evnSegmentValues = new LinkedList(); 
+            LinkedList pidSegmentValues = new LinkedList(); 
+            LinkedList pv1SegmentValues = new LinkedList();
+            LinkedList pv2SegmentValues = new LinkedList();
+            LinkedList orcSegmentValues = new LinkedList();
+            LinkedList obxSegmentValues = new LinkedList();
+            LinkedList obrSegmentValues = new LinkedList();
+            LinkedList dg1SegmentValues = new LinkedList();
+            LinkedList remainingSegmentValues = new LinkedList();
             while((result = br.readLine())!= null){
                 String[] segments = result.split(",");
                 if(segments[0].contains("MSH")){
@@ -93,24 +98,33 @@ public class TemplateGenerator {
             }
             if(mshSegmentValues.size() > 0){
                 this.writeContentToMasterTemplate(masterTemplate.getMSHFieldValuePair(), mshSegmentValues, writeToFile);
-            }else if(evnSegmentValues.size() > 0){
+            }
+            if(evnSegmentValues.size() > 0){
                 this.writeContentToMasterTemplate(masterTemplate.getEVNFieldValuePair(), evnSegmentValues, writeToFile);
-            }else if(pidSegmentValues.size() > 0){
+            }
+            if(pidSegmentValues.size() > 0){
                 this.writeContentToMasterTemplate(masterTemplate.getPIDFieldValuePair(), pidSegmentValues, writeToFile);
-            }else if(pv1SegmentValues.size() > 0){
-                this.writeContentToMasterTemplate(masterTemplate.getPIDFieldValuePair(), pv1SegmentValues, writeToFile);
-            }else if(pv2SegmentValues.size() > 0){
-                this.writeContentToMasterTemplate(masterTemplate.getPIDFieldValuePair(), pv2SegmentValues, writeToFile);
-            }else if(orcSegmentValues.size() > 0){
-                this.writeContentToMasterTemplate(masterTemplate.getPIDFieldValuePair(), orcSegmentValues, writeToFile);
-            }else if(obxSegmentValues.size() > 0){
-                this.writeContentToMasterTemplate(masterTemplate.getPIDFieldValuePair(), obxSegmentValues, writeToFile);
-            }else if(obrSegmentValues.size() > 0){
-                this.writeContentToMasterTemplate(masterTemplate.getPIDFieldValuePair(), obrSegmentValues, writeToFile);
-            }else if(dg1SegmentValues.size() > 0){
-                this.writeContentToMasterTemplate(masterTemplate.getPIDFieldValuePair(), dg1SegmentValues, writeToFile);
-            }else if(remainingSegmentValues.size() > 0){
-                this.writeContentToMasterTemplate(masterTemplate.getPIDFieldValuePair(), remainingSegmentValues, writeToFile);
+            }
+            if(pv1SegmentValues.size() > 0){
+                this.writeContentToMasterTemplate(masterTemplate.getPV1FieldValuePair(), pv1SegmentValues, writeToFile);
+            }
+            if(pv2SegmentValues.size() > 0){
+                this.writeContentToMasterTemplate(masterTemplate.getPV2FieldValuePair(), pv2SegmentValues, writeToFile);
+            }
+            if(orcSegmentValues.size() > 0){
+                this.writeContentToMasterTemplate(masterTemplate.getORCFieldValuePair(), orcSegmentValues, writeToFile);
+            }
+            if(obxSegmentValues.size() > 0){
+                this.writeContentToMasterTemplate(masterTemplate.getOBXFieldValuePair(), obxSegmentValues, writeToFile);
+            }
+            if(obrSegmentValues.size() > 0){
+                this.writeContentToMasterTemplate(masterTemplate.getOBRFieldValuePair(), obrSegmentValues, writeToFile);
+            }
+            if(dg1SegmentValues.size() > 0){
+                this.writeContentToMasterTemplate(masterTemplate.getDG1FieldValuePair(), dg1SegmentValues, writeToFile);
+            }
+            if(remainingSegmentValues.size() > 0){
+                this.writeContentToMasterTemplate(new HashMap(), remainingSegmentValues, writeToFile);
             }
         }
     }
