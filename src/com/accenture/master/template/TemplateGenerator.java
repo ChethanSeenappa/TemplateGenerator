@@ -69,6 +69,8 @@ public class TemplateGenerator {
             LinkedList pv2SegmentValues = new LinkedList();
             LinkedList orcSegmentValues = new LinkedList();
             LinkedList obxSegmentValues = new LinkedList();
+            LinkedList nteSegmentValues = new LinkedList();
+            LinkedList in1SegmentValues = new LinkedList();
             LinkedList obrSegmentValues = new LinkedList();
             LinkedList dg1SegmentValues = new LinkedList();
             LinkedList remainingSegmentValues = new LinkedList();
@@ -88,6 +90,10 @@ public class TemplateGenerator {
                     orcSegmentValues.add(result);
                 }else if(segments[0].contains("OBX")){
                     obxSegmentValues.add(result);
+                }else if(segments[0].contains("NTE")){
+                    nteSegmentValues.add(result);
+                }else if(segments[0].contains("IN1")){
+                    in1SegmentValues.add(result);
                 }else if(segments[0].contains("OBR")){
                     obrSegmentValues.add(result);
                 }else if(segments[0].contains("DG1")){
@@ -116,6 +122,12 @@ public class TemplateGenerator {
             }
             if(obxSegmentValues.size() > 0){
                 this.writeContentToMasterTemplate(masterTemplate.getOBXFieldValuePair(), obxSegmentValues, writeToFile);
+            }
+            if(nteSegmentValues.size() > 0){
+                this.writeContentToMasterTemplate(masterTemplate.getNTEFieldValuePair(), nteSegmentValues, writeToFile);
+            }
+            if(in1SegmentValues.size() > 0){
+                this.writeContentToMasterTemplate(masterTemplate.getIN1FieldValuePair(), in1SegmentValues, writeToFile);
             }
             if(obrSegmentValues.size() > 0){
                 this.writeContentToMasterTemplate(masterTemplate.getOBRFieldValuePair(), obrSegmentValues, writeToFile);
